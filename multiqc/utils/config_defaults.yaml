@@ -403,6 +403,9 @@ module_order:
         module_tag:
             - DNA
             - RNA
+    - sentieon:
+        module_tag:
+            - DNA
     - prokka:
         module_tag:
             - prokarytotic
