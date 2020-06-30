@@ -8,6 +8,9 @@
 
 * [**HOPS**](https://www.github.com/rhubler/HOPS)
   * Post-alignment ancient DNA analysis tool for MALT
+* [**Sentieon**](https://www.sentieon.com/products/)
+  * Submodules added to catch Picard-based QC metrics files
+
 
 #### Module updates
 
