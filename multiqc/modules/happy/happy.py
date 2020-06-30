@@ -6,7 +6,7 @@ from __future__ import print_function
 from collections import OrderedDict
 import csv
 import logging
-
+from multiqc import config
 from multiqc.modules.base_module import BaseMultiqcModule
 from multiqc.plots import table
 
@@ -37,20 +37,30 @@ class MultiqcModule(BaseMultiqcModule):
         self.happy_snp_data = dict()
 
         for f in self.find_log_files("happy", filehandles=True):
-            self.parse_log(f)
+            self.parse_file(f)
             self.add_data_source(f)
 
         if len(self.happy_raw_sample_names) == 0:
             raise UserWarning
 
+        # print number of happy reports found and parsed
         log.info("Found {} reports".format(len(self.happy_raw_sample_names)))
 
+        # Write parsed report data to file
         self.write_data_file(self.happy_indel_data, 'multiqc_happy_indel_data', data_format="json")
         self.write_data_file(self.happy_snp_data, 'multiqc_happy_snp_data', data_format="json")
 
-        indel_headers = {k+'_indel': v for k, v in self.gen_headers().items()}
-        snp_headers = {k+'_snp': v for k, v in self.gen_headers().items()}
+        # generate spceific column header names for each table
+        indel_config = {
+            'namespace': 'Happy',
+            'id': 'happy-indel-table',
+            'col1_header': 'Recall',
+            'col2_header': 'Precision',
+            'col3_header': 'F1 Score',
+            'col4_header': 'Frac NA'
+        }
 
+        # add sections with the values from the indel and snp happy output
         self.add_section(
             name = "INDEL",
             anchor = "happy-indel-plot",
@@ -60,8 +70,17 @@ class MultiqcModule(BaseMultiqcModule):
 
                 Ideally, precision, recall and F1 Score should all be as close to 1 as possible.
             ''',
-            plot = table.plot(self.happy_indel_data, indel_headers)
+            plot = table.plot(self.happy_indel_data, self.gen_headers().items(), indel_config)
         )
+
+        snp_config = {
+            'namespace': 'Happy',
+            'id': 'happy-snp-table',
+            'col1_header': 'recall',
+            'col2_header': 'precision',
+            'col3_header': 'f1 score',
+            'col4_header': 'frac NA'
+        }
         
         self.add_section(
             name = "SNP",
@@ -72,10 +91,10 @@ class MultiqcModule(BaseMultiqcModule):
 
                 Ideally, precision, recall and F1 Score should all be as close to 1 as possible.
             ''',
-            plot = table.plot(self.happy_snp_data, snp_headers)
+            plot = table.plot(self.happy_snp_data, self.gen_headers().items(), snp_config)
         )
 
-    def parse_log(self, f):
+    def parse_file(self, f):
         # Check that we're not ignoring this sample name
         if self.is_ignore_sample(f['s_name']):
             return
@@ -99,6 +118,7 @@ class MultiqcModule(BaseMultiqcModule):
                     self.happy_snp_data[row_id][fn] = row[fn]
 
     def gen_headers(self):
+        """ this specifies the headers in the input file """
         h = OrderedDict()
         h["METRIC.Recall"] = {
             "title": "Recall",
