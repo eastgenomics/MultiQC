@@ -48,8 +48,11 @@ class MultiqcModule(BaseMultiqcModule):
         self.write_data_file(self.happy_indel_data, 'multiqc_happy_indel_data', data_format="json")
         self.write_data_file(self.happy_snp_data, 'multiqc_happy_snp_data', data_format="json")
 
+        indel_headers = {k+'_indel': v for k, v in self.gen_headers().items()}
+        snp_headers = {k+'_snp': v for k, v in self.gen_headers().items()}
+
         self.add_section(
-            name = "Happy INDEL",
+            name = "INDEL",
             anchor = "happy-indel-plot",
             description = 'The default shown fields should give the best overview of quality, but there are many other hidden fields available.',
             helptext = '''
@@ -57,11 +60,11 @@ class MultiqcModule(BaseMultiqcModule):
 
                 Ideally, precision, recall and F1 Score should all be as close to 1 as possible.
             ''',
-            plot = table.plot(self.happy_indel_data, self.gen_headers())
+            plot = table.plot(self.happy_indel_data, indel_headers)
         )
         
         self.add_section(
-            name = "Happy SNP",
+            name = "SNP",
             anchor = "happy-snp-plot",
             description = 'The default shown fields should give the best overview of quality, but there are many other hidden fields available.',
             helptext = '''
@@ -69,7 +72,7 @@ class MultiqcModule(BaseMultiqcModule):
 
                 Ideally, precision, recall and F1 Score should all be as close to 1 as possible.
             ''',
-            plot = table.plot(self.happy_snp_data, self.gen_headers())
+            plot = table.plot(self.happy_snp_data, snp_headers)
         )
 
     def parse_log(self, f):
