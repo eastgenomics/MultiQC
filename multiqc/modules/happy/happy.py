@@ -6,7 +6,7 @@ from __future__ import print_function
 from collections import OrderedDict
 import csv
 import logging
-from multiqc import config
+
 from multiqc.modules.base_module import BaseMultiqcModule
 from multiqc.plots import table
 
@@ -60,7 +60,7 @@ class MultiqcModule(BaseMultiqcModule):
 
                 Ideally, precision, recall and F1 Score should all be as close to 1 as possible.
             ''',
-            plot = table.plot(self.happy_indel_data, self.gen_headers("indel"))
+            plot = table.plot(self.happy_indel_data, self.gen_headers("_indel"))
         )
         
         self.add_section(
@@ -72,7 +72,7 @@ class MultiqcModule(BaseMultiqcModule):
 
                 Ideally, precision, recall and F1 Score should all be as close to 1 as possible.
             ''',
-            plot = table.plot(self.happy_snp_data, self.gen_headers("snp"))
+            plot = table.plot(self.happy_snp_data, self.gen_headers("_snp"))
         )
 
     def parse_file(self, f):
@@ -102,8 +102,8 @@ class MultiqcModule(BaseMultiqcModule):
 
     def gen_headers(self, suffix=""):
         h = OrderedDict()
-        h["METRIC.Recall"] = { # string must match headers in the input file
-            "title": "Recall", # whatever string to be displayed in the html report table
+        h["METRIC.Recall"] = { # string must match headers in the input
+            "title": "Recall", # string to be displayed in the html report table
             "description": "Recall for truth variant representation = TRUTH.TP / (TRUTH.TP + TRUTH.FN)",
             "min": 0,
             "max": 1,
@@ -307,7 +307,7 @@ class MultiqcModule(BaseMultiqcModule):
             "hidden": True,
         }
         # rename column headers with '_indel' or '_snp' suffix
-        headers = [k +"_"+ suffix for k in h.keys()]
+        headers = [k + suffix for k in h.keys()]
         # recreate the ordered dictionary with all headers and information
         header_dict = OrderedDict(zip(headers, h.values()))
         return header_dict
