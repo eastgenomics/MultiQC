@@ -120,15 +120,15 @@ class MultiqcModule(BaseMultiqcModule):
     def gen_headers(self):
         """ this specifies the headers in the input file """
         h = OrderedDict()
-        h["METRIC_Recall"] = {
-            "title": "Recall",
+        h["METRIC.Recall"] = {
+            "title": "Recall-indel",
             "description": "Recall for truth variant representation = TRUTH.TP / (TRUTH.TP + TRUTH.FN)",
             "min": 0,
             "max": 1,
             "format": "{:.4f}",
         }
 
-        h["METRIC.precision"] = {
+        h["METRIC.Precision"] = {
             "title": "Precision",
             "description": "Precision of query variants = QUERY.TP / (QUERY.TP + QUERY.FP)",
             "min": 0,
