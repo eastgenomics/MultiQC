@@ -50,15 +50,15 @@ class MultiqcModule(BaseMultiqcModule):
         self.write_data_file(self.happy_indel_data, 'multiqc_happy_indel_data', data_format="json")
         self.write_data_file(self.happy_snp_data, 'multiqc_happy_snp_data', data_format="json")
 
-        # generate spceific column header names for each table
-        indel_config = {
-            'namespace': 'Happy',
-            'id': 'happy-indel-table',
-            'col1_header': 'Recall',
-            'col2_header': 'Precision',
-            'col3_header': 'F1 Score',
-            'col4_header': 'Frac NA'
-        }
+        # # generate spceific column header names for each table
+        # indel_config = {
+        #     'namespace': 'Happy',
+        #     'id': 'happy-indel-table',
+        #     'col1_header': 'Recall',
+        #     'col2_header': 'Precision',
+        #     'col3_header': 'F1 Score',
+        #     'col4_header': 'Frac NA'
+        # }
 
         # add sections with the values from the indel and snp happy output
         self.add_section(
@@ -73,14 +73,14 @@ class MultiqcModule(BaseMultiqcModule):
             plot = table.plot(self.happy_indel_data, self.gen_headers())
         )
 
-        snp_config = {
-            'namespace': 'Happy',
-            'id': 'happy-snp-table',
-            'col1_header': 'recall',
-            'col2_header': 'precision',
-            'col3_header': 'f1 score',
-            'col4_header': 'frac NA'
-        }
+        # snp_config = {
+        #     'namespace': 'Happy',
+        #     'id': 'happy-snp-table',
+        #     'col1_header': 'recall',
+        #     'col2_header': 'precision',
+        #     'col3_header': 'f1 score',
+        #     'col4_header': 'frac NA'
+        # }
         
         self.add_section(
             name = "SNP",
@@ -105,12 +105,17 @@ class MultiqcModule(BaseMultiqcModule):
 
         rdr = csv.DictReader(f['f'])
         for row in rdr:
+            log.info(row)
+            print(row)
             row_id = "{}_{}_{}".format(f['s_name'], row["Type"], row["Filter"])
             if row["Type"] == 'INDEL':
                 if row_id not in self.happy_indel_data:
                     self.happy_indel_data[row_id] = {"sample_id": f['s_name']}
                 for fn in rdr.fieldnames:
+                    log.info(fn)
+                    print(fn)
                     self.happy_indel_data[row_id][fn] = row[fn]
+
             elif row["Type"] == 'SNP':
                 if row_id not in self.happy_snp_data:
                     self.happy_snp_data[row_id] = {"sample_id": f['s_name']}
@@ -119,8 +124,8 @@ class MultiqcModule(BaseMultiqcModule):
 
     def gen_headers(self):
         h = OrderedDict()
-        h["METRIC.Recall"] = {
-            "title": "Recall",
+        h["METRIC.Recall"] = { # string must match headers in the input file
+            "title": "Recall", # whatever string to be displayed in the html report table
             "description": "Recall for truth variant representation = TRUTH.TP / (TRUTH.TP + TRUTH.FN)",
             "min": 0,
             "max": 1,
