@@ -306,7 +306,7 @@ class MultiqcModule(BaseMultiqcModule):
             "format": None,
             "hidden": True,
         }
-        log.info(type(h.keys()))
         headers = [k +"_"+ suffix for k in h.keys()]
         header_dict = OrderedDict(zip(headers, h.values()))
+        log.info(header_dict.keys())
         return h #eader_dict
