@@ -104,26 +104,20 @@ class MultiqcModule(BaseMultiqcModule):
         self.happy_raw_sample_names.add(f['s_name'])
 
         rdr = csv.DictReader(f['f'])
-        c= 0
         for row in rdr:
-            print("row {}".format(c))
-            c+=1
             row_id = "{}_{}_{}".format(f['s_name'], row["Type"], row["Filter"])
             if row["Type"] == 'INDEL':
                 if row_id not in self.happy_indel_data:
                     self.happy_indel_data[row_id] = {"sample_id": f['s_name']}
+                # add suffix for headers to differentiate between indel and snp
                 for fn in rdr.fieldnames:
-                    print(fn)
-                    if fn == "METRIC.Recall":
-                        print(type(fn))
-                        print(fn+"_indel")
-                    self.happy_indel_data[row_id][fn] = row[fn]
+                    self.happy_indel_data[row_id][fn+"_indel"] = row[fn]
 
             elif row["Type"] == 'SNP':
                 if row_id not in self.happy_snp_data:
                     self.happy_snp_data[row_id] = {"sample_id": f['s_name']}
                 for fn in rdr.fieldnames:
-                    self.happy_snp_data[row_id][fn] = row[fn]
+                    self.happy_snp_data[row_id][fn+"_snp"] = row[fn]
 
     def gen_headers(self):
         h = OrderedDict()
