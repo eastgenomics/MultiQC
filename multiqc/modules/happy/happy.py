@@ -50,16 +50,6 @@ class MultiqcModule(BaseMultiqcModule):
         self.write_data_file(self.happy_indel_data, 'multiqc_happy_indel_data', data_format="json")
         self.write_data_file(self.happy_snp_data, 'multiqc_happy_snp_data', data_format="json")
 
-        # # generate spceific column header names for each table
-        # indel_config = {
-        #     'namespace': 'Happy',
-        #     'id': 'happy-indel-table',
-        #     'col1_header': 'Recall',
-        #     'col2_header': 'Precision',
-        #     'col3_header': 'F1 Score',
-        #     'col4_header': 'Frac NA'
-        # }
-
         # add sections with the values from the indel and snp happy output
         self.add_section(
             name = "INDEL",
@@ -70,17 +60,8 @@ class MultiqcModule(BaseMultiqcModule):
 
                 Ideally, precision, recall and F1 Score should all be as close to 1 as possible.
             ''',
-            plot = table.plot(self.happy_indel_data, self.gen_headers())
+            plot = table.plot(self.happy_indel_data, self.gen_headers("indel"))
         )
-
-        # snp_config = {
-        #     'namespace': 'Happy',
-        #     'id': 'happy-snp-table',
-        #     'col1_header': 'recall',
-        #     'col2_header': 'precision',
-        #     'col3_header': 'f1 score',
-        #     'col4_header': 'frac NA'
-        # }
         
         self.add_section(
             name = "SNP",
@@ -91,7 +72,7 @@ class MultiqcModule(BaseMultiqcModule):
 
                 Ideally, precision, recall and F1 Score should all be as close to 1 as possible.
             ''',
-            plot = table.plot(self.happy_snp_data, self.gen_headers()) #, snp_config
+            plot = table.plot(self.happy_snp_data, self.gen_headers("snp"))
         )
 
     def parse_file(self, f):
@@ -119,7 +100,7 @@ class MultiqcModule(BaseMultiqcModule):
                 for fn in rdr.fieldnames:
                     self.happy_snp_data[row_id][fn+"_snp"] = row[fn]
 
-    def gen_headers(self):
+    def gen_headers(self, suffix=""):
         h = OrderedDict()
         h["METRIC.Recall"] = { # string must match headers in the input file
             "title": "Recall", # whatever string to be displayed in the html report table
@@ -325,5 +306,5 @@ class MultiqcModule(BaseMultiqcModule):
             "format": None,
             "hidden": True,
         }
-
-        return h
+        headers = {k+'_'+suffix: v for k, v in h}
+        return headers
