@@ -70,7 +70,7 @@ class MultiqcModule(BaseMultiqcModule):
 
                 Ideally, precision, recall and F1 Score should all be as close to 1 as possible.
             ''',
-            plot = table.plot(self.happy_indel_data)
+            plot = table.plot(self.happy_indel_data, self.gen_headers())
         )
 
         snp_config = {
@@ -91,7 +91,7 @@ class MultiqcModule(BaseMultiqcModule):
 
                 Ideally, precision, recall and F1 Score should all be as close to 1 as possible.
             ''',
-            plot = table.plot(self.happy_snp_data, self.gen_headers())
+            plot = table.plot(self.happy_snp_data, self.gen_headers(), snp_config)
         )
 
     def parse_file(self, f):
@@ -118,10 +118,9 @@ class MultiqcModule(BaseMultiqcModule):
                     self.happy_snp_data[row_id][fn] = row[fn]
 
     def gen_headers(self):
-        """ this specifies the headers in the input file """
         h = OrderedDict()
         h["METRIC.Recall"] = {
-            "title": "Recall-indel",
+            "title": "Recall",
             "description": "Recall for truth variant representation = TRUTH.TP / (TRUTH.TP + TRUTH.FN)",
             "min": 0,
             "max": 1,
