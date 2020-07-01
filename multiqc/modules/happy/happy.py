@@ -306,6 +306,6 @@ class MultiqcModule(BaseMultiqcModule):
             "format": None,
             "hidden": True,
         }
-        log.info(h)
+        log.info(h.keys())
         # headers = {k+'_'+suffix: v for k, v in h}
         return h #eaders
