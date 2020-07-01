@@ -91,7 +91,7 @@ class MultiqcModule(BaseMultiqcModule):
 
                 Ideally, precision, recall and F1 Score should all be as close to 1 as possible.
             ''',
-            plot = table.plot(self.happy_snp_data, self.gen_headers(), snp_config)
+            plot = table.plot(self.happy_snp_data, self.gen_headers()) #, snp_config
         )
 
     def parse_file(self, f):
@@ -104,16 +104,19 @@ class MultiqcModule(BaseMultiqcModule):
         self.happy_raw_sample_names.add(f['s_name'])
 
         rdr = csv.DictReader(f['f'])
+        c= 0
         for row in rdr:
-            log.info(row)
-            print(row)
+            print("row {}".format(c))
+            c+=1
             row_id = "{}_{}_{}".format(f['s_name'], row["Type"], row["Filter"])
             if row["Type"] == 'INDEL':
                 if row_id not in self.happy_indel_data:
                     self.happy_indel_data[row_id] = {"sample_id": f['s_name']}
                 for fn in rdr.fieldnames:
-                    log.info(fn)
                     print(fn)
+                    if fn == "METRIC.Recall":
+                        print(type(fn))
+                        print(fn+"_indel")
                     self.happy_indel_data[row_id][fn] = row[fn]
 
             elif row["Type"] == 'SNP':
